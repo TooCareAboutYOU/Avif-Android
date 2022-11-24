@@ -1,0 +1,31 @@
+pluginManagement {
+    repositories {
+        gradlePluginPortal()
+        google()
+        mavenCentral()
+//        maven {
+//            url = uri('../repo')
+//        }
+    }
+
+//    resolutionStrategy {
+//        eachPlugin {
+//            if (requested.id.namespace == 'zs.easy') {
+//                useModule("zs.easy.plugin:custom-plugin:${requested.version}")
+//            }
+//        }
+//    }
+}
+
+
+dependencyResolutionManagement {
+    repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
+    repositories {
+        google()
+        mavenCentral()
+    }
+}
+
+rootProject.name = "Avif-Android"
+include ':app'
+include ':plugin_easy'

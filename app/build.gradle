@@ -1,10 +1,11 @@
 plugins {
     id 'com.android.application'
     id 'org.jetbrains.kotlin.android'
+    id 'AndroidPlugin'
+    id 'GroovyPlugin'
 }
 
 apply from: '../script/test.gradle'
-
 
 android {
 

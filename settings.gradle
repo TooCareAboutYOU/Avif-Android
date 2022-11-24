@@ -28,4 +28,5 @@ dependencyResolutionManagement {
 
 rootProject.name = "Avif-Android"
 include ':app'
-include ':plugin_easy'
+//include ':plugin_easy'
+include ':CustomProjectPlugin'

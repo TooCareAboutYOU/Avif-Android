@@ -38,9 +38,8 @@ class MainActivity : AppCompatActivity() {
 
     private lateinit var requestMultiplePermissions: ActivityResultLauncher<Array<String>>
     private lateinit var openDocument: ActivityResultLauncher<Array<String>>
-    private lateinit var takePicturePreview: ActivityResultLauncher<Void?>
     private val imageList: ArrayList<Bitmap> by lazy { arrayListOf() }
-    private var groupName = "480P"
+    private var groupName = "Kodak24"
 
 
     external fun stringFromJNI(): String
@@ -49,20 +48,6 @@ class MainActivity : AppCompatActivity() {
         init {
             System.loadLibrary("avif")
         }
-
-        class ImageViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-            val imageView = itemView.findViewById<AppCompatImageView>(R.id.acIv)
-        }
-    }
-
-    private lateinit var componIcon1:ComponentName
-    private lateinit var componIcon2:ComponentName
-    private lateinit var componDefault:ComponentName
-
-    private fun loadLaunchIcon(){
-        componIcon1= ComponentName(this,"$packageName.icon1")
-        componIcon2= ComponentName(this,"$packageName.icon2")
-        componDefault= ComponentName(this,"$packageName.MainActivity")
     }
 
     @RequiresApi(Build.VERSION_CODES.R)
@@ -73,60 +58,40 @@ class MainActivity : AppCompatActivity() {
 
         supportActionBar?.title = groupName
 
-        mBinding.recyclerView.apply {
-            layoutManager = LinearLayoutManager(this@MainActivity, RecyclerView.VERTICAL, false)
-            adapter = imageAdapter
-        }
-
-
         intentActivityResultLauncher =
             registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
                 if (it.resultCode == Activity.RESULT_OK) {
                     //获取返回的结果
                 }
-//                Log.i("print_logs", "MainActivity::onCreate: intentActivityResultLauncher")
                 openDocument.launch(
                     arrayOf("text/plain")
                 )
             }
 
-        //拍照
-        takePicturePreview =
-            registerForActivityResult(ActivityResultContracts.TakePicturePreview()) {
-                showBitmap(it)
-            }
+//        pexels-photo-1004517_1.avif
+//        pexels-photo-984888_1.avif
+
 
         //用于请求一组权限
         requestMultiplePermissions =
             registerForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) {
-                if (it[Manifest.permission.READ_EXTERNAL_STORAGE]!!) {
-//                    Log.i("print_logs", "requestMultiplePermissions 同意：READ_EXTERNAL_STORAGE")
-
-                } else {
-//                    Log.e("print_logs", "requestMultiplePermissions 拒绝：READ_EXTERNAL_STORAGE")
-                }
-
                 if (it[Manifest.permission.WRITE_EXTERNAL_STORAGE]!! && it[Manifest.permission.READ_EXTERNAL_STORAGE]!!) {
-                    Toast.makeText(this, "解码开始！", Toast.LENGTH_LONG).show();
+                    Toast.makeText(this, "解码开始！", Toast.LENGTH_LONG).show()
+                    PrintLogUtils.init(this)
+
+                    val list=Uri2PathUtil.getFileNameFromAssets(this,groupName)
 
                     for (index in 1..10) {
-                        for (i in 1..10) {
-                            Log.i("print_logs", "MainActivity::onCreate: 内侧：$i")
-
-                            checkAvif("${index}.avif", groupName)
-                        }
+                        checkAvif("kodim01.avif")
+//                        list.forEach {fileName->
+//                            checkAvif(fileName)
+//                        }
                     }
                     Toast.makeText(this, "解码完成!，请打开文档：AvifLog.txt", Toast.LENGTH_LONG).show();
 
                 } else {
+                    Toast.makeText(this, "权限未通过!", Toast.LENGTH_LONG).show();
                 }
-
-//                if (it[Manifest.permission.CAMERA]!!) {
-//                    Log.i("print_logs", "requestMultiplePermissions 同意：CAMERA")
-////                    takePicturePreview.launch(null)
-//                } else {
-//                    Log.e("print_logs", "requestMultiplePermissions 拒绝：CAMERA")
-//                }
             }
 
         val stringBuilder = StringBuilder()
@@ -135,11 +100,6 @@ class MainActivity : AppCompatActivity() {
             if (it != null && !TextUtils.isEmpty(it.path)) {
                 val path = Uri2PathUtil.getRealPathFromUri(this, it)
                 Log.i("print_logs", "openDocument $path")
-//                val localBitmap = BitmapFactory.decodeFile(path)
-//                showBitmap(localBitmap)
-//                val intent = FileUtils.openFile(this, path)
-//                startActivity(intent)
-
                 if (path != null) {
                     if (path.contains("AvifLog.txt")) {
                         val result = FileUtils.getFileContent(path)
@@ -188,34 +148,24 @@ class MainActivity : AppCompatActivity() {
         intentActivityResultLauncher.launch(intent)
     }
 
-    private fun checkAvif(imageName: String, groupPath: String? = null) {
-        PrintLogUtils.init(this)
+    private fun checkAvif(imageName: String) {
         //验证图片是不是AVif格式
-        Uri2PathUtil.readFileFromAssets2(this, groupPath, imageName)?.let { avif ->
+        Log.i("print_logs", imageName)
+        Uri2PathUtil.readFileFromAssets2(this, groupName, imageName)?.let { avif ->
             val result = AvifDecoder.isAvifImage(avif)
 
             if (result) {
                 //获取AVif图片信息
                 val info = AvifDecoder.Info()
-                val resultInfo = AvifDecoder.getInfo(avif, avif.remaining(), info)
+                AvifDecoder.getInfo(avif, avif.remaining(), info)
                 //展示AVif图片
                 val bm = Bitmap.createBitmap(info.width, info.height, Bitmap.Config.ARGB_8888)
                 val bimp = AvifDecoder.decode(avif, avif.remaining(), bm)
-                if (bimp) {
-                    showBitmap(bm)
-                }
             } else {
                 Toast.makeText(this, "图片异常！", Toast.LENGTH_SHORT).show();
             }
         }
     }
-
-    private fun showBitmap(bitmap: Bitmap) {
-//        imageList.add(bitmap)
-//        imageAdapter.notifyItemInserted(imageList.size - 1)
-//        mBinding.recyclerView.scrollToPosition(imageList.size - 1)
-    }
-
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         menuInflater.inflate(R.menu.menu_select_avif, menu)
@@ -224,54 +174,29 @@ class MainActivity : AppCompatActivity() {
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
-            R.id.item_480P -> {
-                Log.i("print_logs", "MainActivity::onOptionsItemSelected: 480P")
-                groupName = "480P"
+            R.id.item_ClassB_4K -> {
+                Log.i("print_logs", "onOptionsItemSelected: ClassB_4K")
+                groupName = "ClassB_4K"
             }
-            R.id.item_540P -> {
-                Log.i("print_logs", "MainActivity::onOptionsItemSelected: 540P")
-                groupName = "540P"
+            R.id.item_ClassC_2K -> {
+                Log.i("print_logs", "onOptionsItemSelected: ClassC_2K")
+                groupName = "ClassC_2K"
             }
-            R.id.item_720P -> {
-                Log.i("print_logs", "MainActivity::onOptionsItemSelected: 720P")
-                groupName = "720P"
-            }
-            R.id.item_1080P -> {
-                Log.i("print_logs", "MainActivity::onOptionsItemSelected: 1080P")
-                groupName = "1080P"
-            }
-            R.id.item_4k -> {
-                Log.i("print_logs", "MainActivity::onOptionsItemSelected: 4K")
-                groupName = "4K"
+            R.id.item_Kodak24 -> {
+                Log.i("print_logs", "onOptionsItemSelected: Kodak24")
+                groupName = "Kodak24"
             }
             else -> {
-                Log.i("print_logs", "MainActivity::onOptionsItemSelected Default: 480P")
-                groupName = "480P"
+                Log.i("print_logs", "onOptionsItemSelected Default: Kodak24")
+                groupName = "Kodak24"
             }
         }
         supportActionBar?.title = groupName
 
         imageList.clear()
-        imageAdapter.notifyDataSetChanged()
         PrintLogUtils.getInstance().resetLog()
         return super.onOptionsItemSelected(item)
     }
-
-
-    private val imageAdapter = object : RecyclerView.Adapter<ImageViewHolder>() {
-        override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ImageViewHolder {
-            val view =
-                LayoutInflater.from(this@MainActivity).inflate(R.layout.layout_image, null, false)
-            return ImageViewHolder(view)
-        }
-
-        override fun onBindViewHolder(holder: ImageViewHolder, position: Int) {
-            holder.imageView.setImageBitmap(imageList[position])
-        }
-
-        override fun getItemCount(): Int = imageList.size
-    }
-
 
     override fun onDestroy() {
         super.onDestroy()

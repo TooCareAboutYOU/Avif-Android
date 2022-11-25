@@ -2,23 +2,15 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <item
-        android:id="@+id/item_480P"
+        android:id="@+id/item_ClassB_4K"
         android:icon="@mipmap/ic_launcher"
-        android:title="480P" />
+        android:title="ClassB_4K" />
     <item
-        android:id="@+id/item_540P"
+        android:id="@+id/item_ClassC_2K"
         android:icon="@mipmap/ic_launcher"
-        android:title="540P" />
+        android:title="ClassC_2K" />
     <item
-        android:id="@+id/item_720P"
+        android:id="@+id/item_Kodak24"
         android:icon="@mipmap/ic_launcher"
-        android:title="720P" />
-    <item
-        android:id="@+id/item_1080P"
-        android:icon="@mipmap/ic_launcher"
-        android:title="1080P" />
-    <item
-        android:id="@+id/item_4k"
-        android:icon="@mipmap/ic_launcher"
-        android:title="4K" />
+        android:title="Kodak24" />
 </menu>

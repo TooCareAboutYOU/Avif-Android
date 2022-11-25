@@ -4,6 +4,7 @@ import org.gradle.api.Action;
 import org.gradle.api.Plugin;
 import org.gradle.api.Project;
 import org.gradle.api.Task;
+import org.gradle.api.file.RegularFileProperty;
 
 /**
  * @author zhangshuai@attrsense.com
@@ -12,9 +13,12 @@ import org.gradle.api.Task;
  */
 public class MyAndroidPlugin implements Plugin<Project> {
 
+    final String GROUP_ID_GROOVY = "zs_plugin";
+
     @Override
     public void apply(Project project) {
-        Task taskHello = project.task("AAndroidPlugin");
+        Task taskHello = project.task("AAndroidTask");
+        taskHello.setGroup(GROUP_ID_GROOVY);
         taskHello.doFirst(new Action<Task>() {
             @Override
             public void execute(Task task) {
@@ -27,6 +31,5 @@ public class MyAndroidPlugin implements Plugin<Project> {
                 System.out.println("I'm from the zs.plugin.android.MyAndroidPlugin.doLast");
             }
         });
-
     }
 }

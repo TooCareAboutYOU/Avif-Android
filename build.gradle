@@ -4,12 +4,12 @@ buildscript {
         //maven本地仓库路径
 //        mavenLocal()
         //自定义仓库路径
-        maven { url = 'CustomProjectPlugin/build/repo' }
+        maven { url = 'CustomProjectPlugin/repo' }
     }
 
     dependencies {
-        classpath 'zs.plugin.android:AndroidPlugin:1.0.0'
-        classpath 'zs.plugin.groovy:GroovyPlugin:1.0.0'
+        classpath 'zs.plugin.android:android-plugin:1.0.0'
+        classpath 'zs.plugin.groovy:groovy-plugin:1.0.0'
     }
 }
 
@@ -19,4 +19,3 @@ plugins {
     id 'org.jetbrains.kotlin.android' version '1.7.20' apply false
     id 'org.jetbrains.kotlin.jvm' version '1.7.20' apply false
 }
-

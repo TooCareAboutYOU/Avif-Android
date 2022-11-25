@@ -2,14 +2,86 @@ plugins {
     id 'java-gradle-plugin'
     id 'maven-publish'
     id 'groovy'
+    id 'base'
+//    id 'signing'
     //id 'java-library'
 }
+
+//tasks.register('AFileToMD5', Zip) {
+//    archiveBaseName = 'filetomd5'
+//    from 'src/filetomd5'
+//}
+//signing {
+//    sign configurations.archives
+
+//    def signingKeyId = findProperty("signingKeyId")
+//    def signingKey = findProperty('signingKey')
+//    def signingPassword = findProperty("signingPassword")
+//    useInMemoryPgpKeys(signingKeyId, signingKey, signingPassword)
+//    sign AFileToMD5
+//}
+
+//configurations.create('codec') {
+//    attributes {
+//        attribute(Usage.USAGE_ATTRIBUTE, objects.named(Usage, Usage.JAVA_RUNTIME))
+//    }
+//    visible = false
+//    canBeConsumed = false
+//    canBeResolved = true
+//}
+
+
+//将build/lib中的CustomProjectPlugin.jar文件，复制一份到build/jar
+def jarTask = tasks.register('AJarDistribution', Jar) {
+    from layout.buildDirectory.dir('libs')
+    //具体文件
+    it.archiveFileName = 'CustomProjectPlugin.jar'
+    it.destinationDirectory = layout.buildDirectory.dir('jar')
+}
+
+
+//将build/toArchive中的HelloZip.zip文件，复制一份到build/zip
+def zipTask = tasks.register('AZipDistribution', Zip) {
+    from layout.buildDirectory.dir('toArchive')
+    //具体文件
+    it.archiveFileName = 'HelloZip.zip'
+    it.destinationDirectory = layout.buildDirectory.dir('zip')
+}
+
+//先调用复制功能，然后删除就文件和文件目录
+tasks.register('ADeleteDistribution', Delete) {
+    it.dependsOn(zipTask)
+    //删除目录
+    delete layout.buildDirectory.dir('toArchive')
+    //删除文件夹下的所有文件
+    //fileTree(layout.buildDirectory.dir('toArchive'))
+}
+
+//移动文件
+tasks.register('AMoveDirFile') {
+    it.doLast {
+        ant.move file: "${buildDir}/libs/CustomProjectPlugin.jar", todir: "${buildDir}/toArchive"
+    }
+}
+
+//删除build文件夹
+tasks.register('myClean', Delete) {
+    delete buildDir
+}
+
+
+///////////////////////////////////////////////////////////////////////////
+//  项目区域
+///////////////////////////////////////////////////////////////////////////
 
 dependencies {
     //gradle sdk
     implementation gradleApi()
     //groovy sdk
     implementation localGroovy()
+
+    implementation 'commons-io:commons-io:2.6'
+    implementation 'commons-codec:commons-codec:1.11'
 }
 
 sourceSets {
@@ -23,29 +95,27 @@ java {
     sourceCompatibility = JavaVersion.VERSION_1_8
     targetCompatibility = JavaVersion.VERSION_1_8
 }
+//  发布区域
 
 //定义Maven仓库信息
-
 def MAVEN_GROOVY_GROUP_ID = 'zs.plugin.groovy'
-def MAVEN_GROOVY_ARTIFACT_ID = 'GroovyPlugin'
+def MAVEN_GROOVY_ARTIFACT_ID = 'groovy-plugin'
 def MAVEN_GROOVY_VERSION = "1.0.0"
 
 def MAVEN_ANDROID_GROUP_ID = 'zs.plugin.android'
-def MAVEN_ANDROID_ARTIFACT_ID = 'AndroidPlugin'
+def MAVEN_ANDROID_ARTIFACT_ID = 'android-plugin'
 def MAVEN_ANDROID_VERSION = "1.0.0"
 
-def MAVEN_NAME = "repo"
-def MAVEN_RELEASE_URL = '/usr/local/Cellar/maven/3.8.6/repo' //"mavenLocal"
 def MAVEN_USERNAME = 'zhangshuai'
 def MAVEN_PASSWORD = 'zhangshuai'
 
 gradlePlugin {
     plugins {
-        groovyPlugin {
+        groovys {
             id = MAVEN_GROOVY_ARTIFACT_ID
             implementationClass = 'zs.plugin.groovy.MyGroovyPlugin'
         }
-        androidPlugin {
+        androids {
             id = MAVEN_ANDROID_ARTIFACT_ID
             implementationClass = 'zs.plugin.android.MyAndroidPlugin'
         }
@@ -59,6 +129,27 @@ publishing {
             groupId = MAVEN_GROOVY_GROUP_ID
             artifactId = MAVEN_GROOVY_ARTIFACT_ID
             version = MAVEN_GROOVY_VERSION
+
+            pom {
+                name = "ZsPlugin"
+                description = "A demonstration of Maven POM customization"
+                url = "https://github.com/TooCareAboutYOU/Avif-Android"
+                inceptionYear='2022/11/25'
+                licenses {
+                    license {
+                        name = "The Apache License, Version 2.0"
+                        url = "http://www.apache.org/licenses/LICENSE-2.0.txt"
+                    }
+                }
+                developers {
+                    developer {
+                        id = "zs"
+                        name = "zhagnshuai"
+                        email = "zhagnshuai@attrsense.com"
+                        organization='上海双深技术有限公司'
+                    }
+                }
+            }
         }
 
         android(MavenPublication) {
@@ -66,6 +157,27 @@ publishing {
             groupId = MAVEN_ANDROID_GROUP_ID
             artifactId = MAVEN_ANDROID_ARTIFACT_ID
             version = MAVEN_ANDROID_VERSION
+
+            pom {
+                name = "ZsPlugin"
+                description = "A demonstration of Maven POM customization"
+                url = "https://github.com/TooCareAboutYOU/Avif-Android"
+                inceptionYear='2022/11/25'
+                licenses {
+                    license {
+                        name = "The Apache License, Version 2.0"
+                        url = "http://www.apache.org/licenses/LICENSE-2.0.txt"
+                    }
+                }
+                developers {
+                    developer {
+                        id = "zs"
+                        name = "zhagnshuai"
+                        email = "zhagnshuai@attrsense.com"
+                        organization='上海双深技术有限公司'
+                    }
+                }
+            }
         }
     }
 
@@ -79,9 +191,8 @@ publishing {
 //                username = MAVEN_USERNAME
 //                password = MAVEN_PASSWORD
 //            }
-            //自定义路径：
-            url = layout.buildDirectory.dir('repo')
-            print("打印：${layout.projectDirectory.toString()}")
+            //自定义路径：CustomProjectPlugin/build/repo
+            url = layout.projectDirectory.dir('repo')
         }
     }
 }

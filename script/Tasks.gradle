@@ -1,0 +1,71 @@
+def GROUP_ID = 'a_tasks_number'
+
+def aTask_1 = tasks.register('ATasks_1') {
+    it.group(GROUP_ID)
+    it.description("我不知道改说什么！")
+    it.doFirst {
+        System.out.println("I'm from the ATasks_1.doFirst")
+    }
+    it.doLast {
+        System.out.println("I'm from the ATasks_1.doLast")
+    }
+}
+
+def aTask_2 = tasks.register('ATasks_2') {
+    it.group(GROUP_ID)
+    it.description("我不知道改说什么！")
+    it.doFirst {
+        System.out.println("I'm from the ATasks_2.doFirst")
+    }
+    it.doLast {
+        System.out.println("I'm from the ATasks_2.doLast")
+    }
+}
+
+aTask_1.configure {
+    //1
+//    it.dependsOn aTask_2
+
+    //2
+//    it.onlyIf {
+//        !project.hasProperty('skipTasks')
+//    }
+    //3
+//    it.dependsOn(provider {
+//        tasks.findAll { task -> task.name.startsWith('lib') }
+//    })
+
+    //4
+    it.doFirst {
+        if (true) {
+            System.out.println('准备异常：')
+            throw new StopExecutionException('停止了！')
+        }
+    }
+}
+
+def lib1 = tasks.register('lib1') {
+    it.group(GROUP_ID)
+    it.doLast {
+        System.out.println('lib1')
+    }
+}
+lib1.configure { it.enabled = false }
+
+def lib2 = tasks.register('lib2') {
+    it.group(GROUP_ID)
+    it.doLast {
+        System.out.println("lib2-1：${System.currentTimeSeconds()}")
+        Thread.sleep(1000)
+        System.out.println("lib2-2：${System.currentTimeSeconds()}")
+    }
+}
+
+
+tasks.register('notALib') {
+    it.group(GROUP_ID)
+    it.dependsOn(aTask_1)
+    it.doLast {
+        System.out.println('notALib')
+    }
+}

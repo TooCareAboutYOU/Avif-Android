@@ -1,0 +1,106 @@
+/**
+ * Working with files in custom tasks and plugins
+ */
+abstract class GreetingToFileTask extends DefaultTask {
+
+    @Input
+    abstract Property<String> getMessage()
+
+    GreetingToFileTask() {
+        message.convention('Hello from GreetingToFileTask')
+    }
+
+    @OutputFile
+    abstract RegularFileProperty getDestination()
+
+    @TaskAction
+    def greet() {
+        def file = getDestination().get().asFile
+        file.parentFile.mkdirs()
+        file.write("I am a file's write message!")
+    }
+
+    @Override
+    void setGroup(String group) {
+        super.setGroup('a_demo_tasks')
+    }
+}
+
+tasks.register('AGreetFile', GreetingToFileTask) {
+    group('a_demo_tasks')
+
+    def greetFile = objects.fileProperty()
+    greetFile.set(layout.projectDirectory.file('Hello.txt'))
+    destination = greetFile
+
+    it.message='message is from AGreetFile!'
+
+    doLast {
+        println 'AGreetFile is running'
+    }
+}
+
+tasks.register('AGreetFilePrint') {
+    group('a_demo_tasks')
+    dependsOn AGreetFile
+    doLast {
+        def file = greetFile.get().asFile
+        println "文件名:${file.name}，文件内容：${file.text}"
+    }
+}
+
+
+/**
+ * Making the plugin configurable
+ */
+abstract class GreetingPluginExtension {
+    abstract Property<String> getMessage()
+
+    GreetingPluginExtension() {
+        message.convention('Hello from GreetingPlugin')
+    }
+}
+
+interface GreetingPluginExtensionImpl {
+    Property<String> getMessage()
+    Property<String> getGreeter()
+}
+
+/**
+ * Writing a simple plugin
+ */
+class GreetingPlugin implements Plugin<Project> {
+
+    private String PLUGIN_NAME = 'AGreetingPlugin'
+
+    @Override
+    void apply(Project project) {
+
+        def extension = project.extensions.create("greeting", GreetingPluginExtension)
+
+        def extensionImpl = project.extensions.create("greetingImpl", GreetingPluginExtensionImpl)
+
+        project.task(PLUGIN_NAME) {
+            group('a_demo_tasks')
+//            println("I'm from DemoPlugin.gradle's GreetingPlugin")
+            doFirst {
+                println("I'm from GreetingPlugin.doFirst：")
+                println "打印：${extensionImpl.message.get()}，${extensionImpl.greeter.get()}"
+            }
+
+            doLast {
+                println("I'm from GreetingPlugin.doLast：")
+                println "输出：" + extension.message.get()
+            }
+        }
+    }
+}
+
+apply plugin: GreetingPlugin
+
+greetingImpl {
+    message = "Hi greetingImpl,I from Gradle' message"
+    greeter = "Hi greetingImpl,I from Gradle' greeter"
+}
+
+greeting.message = "Hi greeting, I from Gradle"

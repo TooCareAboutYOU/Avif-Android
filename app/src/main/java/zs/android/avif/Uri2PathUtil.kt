@@ -169,6 +169,19 @@ object Uri2PathUtil {
         return "com.android.providers.media.documents" == uri.authority
     }
 
+    fun getFileNameFromAssets(context: Context, groupPath: String): List<String> {
+        try {
+            context.assets.list(groupPath)?.let {
+                if (it.isNotEmpty()) {
+                    return it.toList()
+                }
+            }
+        } catch (exception: java.lang.Exception) {
+            exception.printStackTrace()
+        }
+        return emptyList()
+    }
+
     fun readFileFromAssets(context: Context, groupPath: String?, filename: String): ByteArray? {
         var buffer: ByteArray? = null
         val am = context.assets
@@ -180,7 +193,6 @@ object Uri2PathUtil {
                 am.open(filename)
             }
             val length = inputStream.available()
-//            Log.d("print_logs", "readFileFromAssets length:$length")
             buffer = ByteArray(length)
             inputStream.read(buffer)
         } catch (exception: java.lang.Exception) {
@@ -207,11 +219,11 @@ object Uri2PathUtil {
             byteBuffer = ByteBuffer.allocateDirect(buffer.size)
             byteBuffer.put(buffer)
             byteBuffer.flip()
-//            Log.i("print_logs", "Uri2PathUtil::readFileFromAssets2: ${buffer.size}")
-//            PrintLogUtils.getInstance().inputLog("Size：${buffer.size}")
         } catch (exception: java.lang.Exception) {
             exception.printStackTrace()
         }
         return byteBuffer
     }
+
+
 }

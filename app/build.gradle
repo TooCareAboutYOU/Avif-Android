@@ -3,42 +3,47 @@ plugins {
     id 'org.jetbrains.kotlin.android'
     //自定义三
     id 'android-plugin'
-    id 'groovy-plugin'
+//    id 'groovy-plugin'
 }
 
-
-apply from: '../script/AppConfig.gradle'
+//App配置文档
+apply from: "${rootProject.rootDir}/script/AppConfig.gradle"
+//打包apk上传到蒲公英，并发通知到钉钉
+//apply from: "${rootProject.rootDir}/script/UploadApk.gradle"
 //自定义一
-apply from: '../script/Tasks.gradle'
+apply from: "${rootProject.rootDir}/script/Tasks.gradle"
 //自定义二
-apply from: '../script/DemoPlugin.gradle'
-
-
-def firstRunTask = tasks.register('AFirstRun') {
-    it.doLast {
-        System.out.print("AFirstRunTask is running...")
-    }
-}
-
-def lastRunTask = tasks.register('ALastRun') {
-    it.doLast {
-        System.out.print("ALastRunTask is running...")
-    }
-}
-
-afterEvaluate {
-    //it.name.startsWith('assemble') && it.name.endsWith('Debug')
-    tasks.matching { it.name == 'assembleDebug' } each {
-        it.dependsOn(firstRunTask)
-        it.finalizedBy(lastRunTask)
-    }
-}
-
+apply from: "${rootProject.rootDir}/script/DemoPlugin.gradle"
 
 android {
     namespace 'zs.android.avif'
     defaultConfig {
         applicationId "zs.android.avif"
+    }
+
+    // 自定义打包名称
+//    android.applicationVariants.all { variant ->
+//        variant.getPackageApplication().outputDirectory = new File(project.rootDir.absolutePath + "/apks")
+//        variant.outputs.all {
+//            outputFileName = "${buildType.name}_v${defaultConfig.versionName}_${defaultConfig.versionCode}.apk"
+//        }
+//    }
+
+    applicationVariants.all { variant ->
+        // 打包完成后复制到的目录
+        def outputFileDir = "${project.projectDir.absolutePath}/release"
+        // 打包完成后做的一些事,复制apk到指定文件夹
+        variant.assemble.doLast {
+            File out = new File(outputFileDir)
+            copy {
+                variant.outputs.forEach { file ->
+                    copy {
+                        from file.outputFile
+                        into out
+                    }
+                }
+            }
+        }
     }
 }
 
@@ -46,3 +51,4 @@ dependencies {
     implementation files("libs/avifandroidjni-release.aar")
 //    implementation files("libs/avifandroidjni-release_1.aar")
 }
+

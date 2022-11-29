@@ -1,3 +1,5 @@
+import javax.swing.text.html.parser.ContentModel
+
 def GROUP_ID = 'a_tasks_number'
 
 def aTask_1 = tasks.register('ATasks_1') {

@@ -2,7 +2,7 @@ android {
 
     signingConfigs {
         release {
-            storeFile file('/Users/zhangshuai/Project____/Android/AvifAndroid/Avif.jks')
+            storeFile file("${rootProject.rootDir}/Avif.jks")
             storePassword '123456'
             keyAlias '123456'
             keyPassword '123456'
@@ -14,16 +14,25 @@ android {
     defaultConfig {
         minSdk 21
         targetSdk 32
-        versionCode 1
-        versionName "1.0"
+        versionCode 102
+        versionName "1.0.2"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
 
     buildTypes {
+        def RELEASE_API_HOST = "\"https://api.github.com/user\""
+        def DEBUG_API_HOST = "\"https://api.github.com/authorizations\""
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
             signingConfig signingConfigs.release
+            buildConfigField("String", "API_HOST", "${RELEASE_API_HOST}")
+        }
+        debug {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            signingConfig signingConfigs.release
+            buildConfigField("String", "API_HOST", "${DEBUG_API_HOST}")
         }
     }
 

@@ -27,11 +27,11 @@
         {
           "name": "android-plugin-1.0.0.jar",
           "url": "android-plugin-1.0.0.jar",
-          "size": 40732,
-          "sha512": "79002d48cbb34ba09c534225dc66151c424d34e4cfc25e6ce30773bcd0c5f15fff020cad47067a0b6415c23819ec85c5d71c9f8022c346722a6970948f5d2138",
-          "sha256": "2a130ae600ab56d4fa0dc5c7824b4fedc7b7812b34ad54b783eb1d6b02d48571",
-          "sha1": "627fb0aed56d17c051eaf3adea4ab8276f1a3c8f",
-          "md5": "d70c8898d10eaa07107002191db2885a"
+          "size": 65454,
+          "sha512": "d2a9cde6725cd3f00d74b34b5ceb1533d9bdc5572b1e44ad9b1977defa65f33fd206d0f21e4b092ad0ba0200142dfed129839f5b070b62f323554ba4f66aedee",
+          "sha256": "861111535805186d3874ac36ecfbf434bbcb0262e6008a2955a564cde47e7794",
+          "sha1": "e2cce61d82d0b1c83225753606142b7c09406a1b",
+          "md5": "785c87cafb864cd75a37b0baca68a603"
         }
       ]
     },
@@ -58,17 +58,45 @@
           "version": {
             "requires": "1.11"
           }
+        },
+        {
+          "group": "com.squareup.okhttp3",
+          "module": "okhttp",
+          "version": {
+            "requires": "4.10.0"
+          }
+        },
+        {
+          "group": "com.squareup.retrofit2",
+          "module": "retrofit",
+          "version": {
+            "requires": "2.9.0"
+          }
+        },
+        {
+          "group": "com.squareup.retrofit2",
+          "module": "converter-gson",
+          "version": {
+            "requires": "2.9.0"
+          }
+        },
+        {
+          "group": "com.squareup.okhttp3",
+          "module": "logging-interceptor",
+          "version": {
+            "requires": "4.9.3"
+          }
         }
       ],
       "files": [
         {
           "name": "android-plugin-1.0.0.jar",
           "url": "android-plugin-1.0.0.jar",
-          "size": 40732,
-          "sha512": "79002d48cbb34ba09c534225dc66151c424d34e4cfc25e6ce30773bcd0c5f15fff020cad47067a0b6415c23819ec85c5d71c9f8022c346722a6970948f5d2138",
-          "sha256": "2a130ae600ab56d4fa0dc5c7824b4fedc7b7812b34ad54b783eb1d6b02d48571",
-          "sha1": "627fb0aed56d17c051eaf3adea4ab8276f1a3c8f",
-          "md5": "d70c8898d10eaa07107002191db2885a"
+          "size": 65454,
+          "sha512": "d2a9cde6725cd3f00d74b34b5ceb1533d9bdc5572b1e44ad9b1977defa65f33fd206d0f21e4b092ad0ba0200142dfed129839f5b070b62f323554ba4f66aedee",
+          "sha256": "861111535805186d3874ac36ecfbf434bbcb0262e6008a2955a564cde47e7794",
+          "sha1": "e2cce61d82d0b1c83225753606142b7c09406a1b",
+          "md5": "785c87cafb864cd75a37b0baca68a603"
         }
       ]
     }

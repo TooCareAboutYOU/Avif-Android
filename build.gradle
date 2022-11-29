@@ -8,8 +8,14 @@ buildscript {
     }
 
     dependencies {
+//        classpath 'com.squareup.retrofit2:retrofit:2.9.0'
+//        classpath 'com.squareup.retrofit2:converter-gson:2.9.0'
+//        classpath 'com.squareup.okhttp3:okhttp:4.10.0'
+//        classpath 'com.squareup.okhttp3:logging-interceptor:4.9.3'
+
+        //模拟远程仓库依赖
         classpath 'zs.plugin.android:android-plugin:1.0.0'
-        classpath 'zs.plugin.groovy:groovy-plugin:1.0.0'
+//        classpath 'zs.plugin.groovy:groovy-plugin:1.0.0'
     }
 }
 

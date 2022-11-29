@@ -1,20 +1,42 @@
 pluginManagement {
     repositories {
+        maven { url 'https://jitpack.io' }
+        maven { url 'https://maven.aliyun.com/repository/public' }
+        maven { url 'https://maven.aliyun.com/repository/central' }
+        maven { url 'https://maven.aliyun.com/repository/google' }
+        maven { url 'https://maven.aliyun.com/repository/public' }
+        maven { url 'https://maven.aliyun.com/repository/gradle-plugin' }
+
         gradlePluginPortal()
         google()
         mavenCentral()
+
 //        maven {
-//            url = uri('../repo')
+//            url = uri('CustomProjectPlugin/repo')
 //        }
     }
 
 //    resolutionStrategy {
 //        eachPlugin {
-//            if (requested.id.namespace == 'zs.easy') {
-//                useModule("zs.easy.plugin:custom-plugin:${requested.version}")
+//            if (requested.id.namespace == 'zs.plugin') {
+//                useModule("zs.plugin.android:android-plugin:${requested.version}")
+//                useModule("zs.plugin.groovy:groovy-plugin:${requested.version}")
 //            }
 //        }
 //    }
+}
+dependencyResolutionManagement {
+    repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
+    repositories {
+        maven { url 'https://jitpack.io' }
+        maven { url 'https://maven.aliyun.com/repository/public' }
+        maven { url 'https://maven.aliyun.com/repository/central' }
+        maven { url 'https://maven.aliyun.com/repository/google' }
+        maven { url 'https://maven.aliyun.com/repository/public' }
+        maven { url 'https://maven.aliyun.com/repository/gradle-plugin' }
+        google()
+        mavenCentral()
+    }
 }
 
 

@@ -1,0 +1,88 @@
+import okhttp3.OkHttpClient
+import retrofit2.Retrofit
+
+//dependencies {
+//    implementation 'com.squareup.okhttp3:okhttp:4.10.0'
+//    implementation 'com.squareup.retrofit2:retrofit:2.9.0'
+//    implementation 'com.squareup.retrofit2:converter-gson:2.9.0'
+//}
+
+/**
+ * ---------------------------------------------------------------------------------------------
+ *                                         上传Apk文件到我的蒲公英
+ * ---------------------------------------------------------------------------------------------
+ * @description ：v1.0.0_alpha
+ */
+
+//import retrofit2.Call
+//import retrofit2.http.Body
+//import retrofit2.http.POST
+
+//def pgy_base_url = 'https://www.pgyer.com/apiv2/app/'
+//def api_key = 'de0f88af701cd8853bec33df259cc83e'
+//def dd_web_hook = 'https://oapi.dingtalk.com/robot/send?access_token=d0847aaa3043c3d85e96a6784502c1304b6e3103f8b872d6b82e7b6c4f04a0a1'
+////获取上传的token
+//def result_key = null
+
+//interface ApiService {
+//    @POST("getCOSToken")
+//    Call<String> getUploadKey(@Body Map<String, Object> map)
+//}
+
+/**
+ * 获取上传的token
+ */
+//class GetUploadToken {
+//    //key 上传文件存储标识唯一 key
+//    String key;
+//    //上传文件的 URL
+//    String endpoint;
+//    //上传文件需要的参数，包含signature、x-cos-security-token、key
+//    String params;
+//
+//
+//    @Override
+//    public String toString() {
+//        return "key：$key，endpoint：$endpoint，params：$params"
+//    }
+//}
+//
+//def mOkhttpClient = new OkHttpClient.Builder().build()
+//def mRetrofit = new Retrofit.Builder()
+//        .baseUrl(pgy_base_url)
+//        .client(mOkhttpClient)
+//        .addConverterFactory(GsonConverterFactory.create())
+//        .build()
+//def apiService = mRetrofit.create(ApiService.class)
+
+/**
+ * ---------------------------------------------------------------------------------------------
+ *                                          优美的分割线
+ * ---------------------------------------------------------------------------------------------
+ * @description ：
+ */
+
+//def firstRunTask = tasks.register('AFirstRun') {
+//    it.doFirst {
+//    }
+//    it.doLast {
+//        System.out.print("AFirstRunTask is running...")
+//    }
+//}
+//def lastRunTask = tasks.register('ALastRun') {
+//    it.doLast {
+//        System.out.print("ALastRunTask is running...")
+//    }
+//}
+//
+//afterEvaluate {
+//    //it.name.startsWith('assemble') && it.name.endsWith('Debug')
+//    tasks.matching { it.name == 'assembleDebug' || it.name == 'assembleRelease' } each {
+//        //build之前运行
+//        it.dependsOn(firstRunTask)
+//        //build之后运行
+//        it.finalizedBy(lastRunTask)
+//    }
+//}
+
+

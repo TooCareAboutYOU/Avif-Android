@@ -55,7 +55,6 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         mBinding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(mBinding.root)
-
         supportActionBar?.title = groupName
 
         intentActivityResultLauncher =
@@ -67,11 +66,6 @@ class MainActivity : AppCompatActivity() {
                     arrayOf("text/plain")
                 )
             }
-
-//        pexels-photo-1004517_1.avif
-//        pexels-photo-984888_1.avif
-
-
         //用于请求一组权限
         requestMultiplePermissions =
             registerForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) {

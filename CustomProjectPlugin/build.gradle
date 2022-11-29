@@ -3,33 +3,8 @@ plugins {
     id 'maven-publish'
     id 'groovy'
     id 'base'
-//    id 'signing'
     //id 'java-library'
 }
-
-//tasks.register('AFileToMD5', Zip) {
-//    archiveBaseName = 'filetomd5'
-//    from 'src/filetomd5'
-//}
-//signing {
-//    sign configurations.archives
-
-//    def signingKeyId = findProperty("signingKeyId")
-//    def signingKey = findProperty('signingKey')
-//    def signingPassword = findProperty("signingPassword")
-//    useInMemoryPgpKeys(signingKeyId, signingKey, signingPassword)
-//    sign AFileToMD5
-//}
-
-//configurations.create('codec') {
-//    attributes {
-//        attribute(Usage.USAGE_ATTRIBUTE, objects.named(Usage, Usage.JAVA_RUNTIME))
-//    }
-//    visible = false
-//    canBeConsumed = false
-//    canBeResolved = true
-//}
-
 
 //将build/lib中的CustomProjectPlugin.jar文件，复制一份到build/jar
 def jarTask = tasks.register('AJarDistribution', Jar) {
@@ -82,6 +57,12 @@ dependencies {
 
     implementation 'commons-io:commons-io:2.6'
     implementation 'commons-codec:commons-codec:1.11'
+
+    implementation 'com.squareup.okhttp3:okhttp:4.10.0'
+    implementation 'com.squareup.retrofit2:retrofit:2.9.0'
+    implementation 'com.squareup.retrofit2:converter-gson:2.9.0'
+    implementation 'com.squareup.okhttp3:logging-interceptor:4.9.3'
+//    implementation 'com.aliyun:dingtalk:1.4.82'
 }
 
 sourceSets {

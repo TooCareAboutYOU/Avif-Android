@@ -32,7 +32,7 @@ public interface ApiService {
      */
     @FormUrlEncoded
     @POST("getCOSToken")
-    Call<BaseResponseBean<GetUploadTokenBean>> getUploadKey(@FieldMap Map<String, Object> map);
+    Call<BaseResponseBean<GetUploadTokenBean>> getUploadToken(@FieldMap Map<String, Object> map);
 
     /**
      * 上传apk文件
@@ -69,7 +69,13 @@ public interface ApiService {
     Call<BaseResponseBean<GetAppDetailInfoBean>> getAppDetailInfo(@FieldMap Map<String, Object> map);
 
 
-
+    /**
+     * 发送自定义消息形式到钉钉
+     *
+     * @param url
+     * @param body
+     * @return
+     */
     @POST
     Call<BaseResponseBean<Object>> postToDD(@Url String url, @Body DingDingBean body);
 

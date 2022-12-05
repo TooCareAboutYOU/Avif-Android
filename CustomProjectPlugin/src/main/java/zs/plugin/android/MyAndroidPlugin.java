@@ -1,5 +1,6 @@
 package zs.plugin.android;
 
+
 import org.gradle.api.Action;
 import org.gradle.api.Plugin;
 import org.gradle.api.Project;
@@ -17,11 +18,12 @@ import zs.plugin.android.http.HttpRequest;
  */
 public class MyAndroidPlugin implements Plugin<Project> {
 
-    final String GROUP_ID_GROOVY = "zs_plugin";
+    private final String GROUP_ID_ANDROID = "zs_plugin";
+    private final String TASK_NAME_TOKEN = "AGetUploadToken";
+    private final String TASK_NAME_UPLOAD = "AUploadApk";
 
     @Override
     public void apply(Project project) {
-        HttpRequest.init(project);
 
         createTasks(project);
 
@@ -36,8 +38,8 @@ public class MyAndroidPlugin implements Plugin<Project> {
                 }).forEach(new Consumer<Task>() {
                     @Override
                     public void accept(Task task) {
-                        task.dependsOn("AGetUploadToken");
-                        task.finalizedBy("AUploadApk");
+                        task.dependsOn(TASK_NAME_TOKEN);
+                        task.finalizedBy(TASK_NAME_UPLOAD);
                     }
                 });
             }
@@ -45,17 +47,23 @@ public class MyAndroidPlugin implements Plugin<Project> {
     }
 
     private void createTasks(Project project) {
-        Task taskGetToken = project.task("AGetUploadToken");
-        taskGetToken.setGroup(GROUP_ID_GROOVY);
+        Task taskGetToken = project.task(TASK_NAME_TOKEN);
+        taskGetToken.setGroup(GROUP_ID_ANDROID);
         taskGetToken.doFirst(new Action<Task>() {
             @Override
             public void execute(Task task) {
-                HttpRequest.getInstance().getUploadKey();
+                HttpRequest.init(project);
+            }
+        });
+        taskGetToken.doLast(new Action<Task>() {
+            @Override
+            public void execute(Task task) {
+                HttpRequest.getInstance().getUploadToken();
             }
         });
 
-        Task taskUploadApk = project.task("AUploadApk");
-        taskUploadApk.setGroup(GROUP_ID_GROOVY);
+        Task taskUploadApk = project.task(TASK_NAME_UPLOAD);
+        taskUploadApk.setGroup(GROUP_ID_ANDROID);
         taskUploadApk.doLast(new Action<Task>() {
             @Override
             public void execute(Task task) {
@@ -64,7 +72,7 @@ public class MyAndroidPlugin implements Plugin<Project> {
         });
 
         Task taskPostTextToDD = project.task("APostDD");
-        taskPostTextToDD.setGroup(GROUP_ID_GROOVY);
+        taskPostTextToDD.setGroup(GROUP_ID_ANDROID);
         taskPostTextToDD.doLast(new Action<Task>() {
             @Override
             public void execute(Task task) {

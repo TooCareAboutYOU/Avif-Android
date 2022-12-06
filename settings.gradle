@@ -51,3 +51,4 @@ dependencyResolutionManagement {
 rootProject.name = "Avif-Android"
 include ':app'
 include ':CustomProjectPlugin'
+//include ':module_bitmap'

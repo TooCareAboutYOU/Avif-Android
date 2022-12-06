@@ -2,17 +2,12 @@ package zs.android.avif
 
 import android.Manifest
 import android.app.Activity
-import android.content.ComponentName
-import android.content.Context
 import android.content.Intent
 import android.graphics.Bitmap
-import android.graphics.BitmapFactory
-import android.graphics.drawable.Drawable
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.os.Environment
-import android.provider.MediaStore
 import android.provider.Settings
 import android.text.TextUtils
 import android.util.Log
@@ -22,15 +17,7 @@ import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
-import androidx.appcompat.widget.AppCompatImageView
-import androidx.appcompat.widget.AppCompatTextView
-import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
-import org.aomedia.avif.android.AvifDecoder
-import org.aomedia.avif.android.PrintLogUtils
 import zs.android.avif.databinding.ActivityMainBinding
-import java.io.File
-import java.nio.ByteBuffer
 
 class MainActivity : AppCompatActivity() {
 
@@ -71,7 +58,7 @@ class MainActivity : AppCompatActivity() {
             registerForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) {
                 if (it[Manifest.permission.WRITE_EXTERNAL_STORAGE]!! && it[Manifest.permission.READ_EXTERNAL_STORAGE]!!) {
                     Toast.makeText(this, "解码开始！", Toast.LENGTH_LONG).show()
-                    PrintLogUtils.init(this)
+//                    PrintLogUtils.init(this)
 
                     val list=Uri2PathUtil.getFileNameFromAssets(this,groupName)
 
@@ -146,18 +133,18 @@ class MainActivity : AppCompatActivity() {
         //验证图片是不是AVif格式
         Log.i("print_logs", imageName)
         Uri2PathUtil.readFileFromAssets2(this, groupName, imageName)?.let { avif ->
-            val result = AvifDecoder.isAvifImage(avif)
-
-            if (result) {
-                //获取AVif图片信息
-                val info = AvifDecoder.Info()
-                AvifDecoder.getInfo(avif, avif.remaining(), info)
-                //展示AVif图片
-                val bm = Bitmap.createBitmap(info.width, info.height, Bitmap.Config.ARGB_8888)
-                val bimp = AvifDecoder.decode(avif, avif.remaining(), bm)
-            } else {
-                Toast.makeText(this, "图片异常！", Toast.LENGTH_SHORT).show();
-            }
+//            val result = AvifDecoder.isAvifImage(avif)
+//
+//            if (result) {
+//                //获取AVif图片信息
+//                val info = AvifDecoder.Info()
+//                AvifDecoder.getInfo(avif, avif.remaining(), info)
+//                //展示AVif图片
+//                val bm = Bitmap.createBitmap(info.width, info.height, Bitmap.Config.ARGB_8888)
+//                val bimp = AvifDecoder.decode(avif, avif.remaining(), bm)
+//            } else {
+//                Toast.makeText(this, "图片异常！", Toast.LENGTH_SHORT).show();
+//            }
         }
     }
 
@@ -188,12 +175,12 @@ class MainActivity : AppCompatActivity() {
         supportActionBar?.title = groupName
 
         imageList.clear()
-        PrintLogUtils.getInstance().resetLog()
+//        PrintLogUtils.getInstance().resetLog()
         return super.onOptionsItemSelected(item)
     }
 
     override fun onDestroy() {
         super.onDestroy()
-        PrintLogUtils.getInstance().resetLog()
+//        PrintLogUtils.getInstance().resetLog()
     }
 }

@@ -27,11 +27,11 @@
         {
           "name": "android-plugin-1.0.0.jar",
           "url": "android-plugin-1.0.0.jar",
-          "size": 74453,
-          "sha512": "f0ad7a0d64b22a7453043c7f84032296459fb4d847b9b48e2a124298e187ee465df082e58d898cda03f88ddbc33f90cb97a307b13dac624018654ba33150dccb",
-          "sha256": "a1b7d724ff86c0ecbc14b629faf973052b4fd78e0df5ba2076530e2ed7b3ae7e",
-          "sha1": "40e5d05cc9746333835cdc626227077a89cf6e63",
-          "md5": "cbf1dab8587f7afb5d381f6f50559312"
+          "size": 74099,
+          "sha512": "a375dc7c0ab58fd4f822bf6b17199fbca92d31d5fa49a4d1bdae965ed89f2661113fec016828dd7035f110d44f8303acffc6c124bdbc6f88c291680248771dde",
+          "sha256": "88e8f520de9b243840ee348da85d082d99af266e0d7a015feea6b3ec0d0f79d3",
+          "sha1": "9618b8b10d88ac041e5ad92df812a29fc8caf280",
+          "md5": "42f9d83447083e6322714d9847409bee"
         }
       ]
     },
@@ -92,11 +92,11 @@
         {
           "name": "android-plugin-1.0.0.jar",
           "url": "android-plugin-1.0.0.jar",
-          "size": 74453,
-          "sha512": "f0ad7a0d64b22a7453043c7f84032296459fb4d847b9b48e2a124298e187ee465df082e58d898cda03f88ddbc33f90cb97a307b13dac624018654ba33150dccb",
-          "sha256": "a1b7d724ff86c0ecbc14b629faf973052b4fd78e0df5ba2076530e2ed7b3ae7e",
-          "sha1": "40e5d05cc9746333835cdc626227077a89cf6e63",
-          "md5": "cbf1dab8587f7afb5d381f6f50559312"
+          "size": 74099,
+          "sha512": "a375dc7c0ab58fd4f822bf6b17199fbca92d31d5fa49a4d1bdae965ed89f2661113fec016828dd7035f110d44f8303acffc6c124bdbc6f88c291680248771dde",
+          "sha256": "88e8f520de9b243840ee348da85d082d99af266e0d7a015feea6b3ec0d0f79d3",
+          "sha1": "9618b8b10d88ac041e5ad92df812a29fc8caf280",
+          "md5": "42f9d83447083e6322714d9847409bee"
         }
       ]
     }

@@ -1,4 +1,4 @@
-package zs.plugin.android.model;
+package zs.plugin.android.model.response;
 
 import com.google.gson.Gson;
 
@@ -32,7 +32,7 @@ import java.io.Serializable;
  * otherApps	            array	历史版本
  * otherAppsCount	        int	    历史版本数量
  */
-public class GetAppDetailInfoBean implements Serializable {
+public class PgyAppDetailInfoBean implements Serializable {
     public String buildKey;
     public Integer buildType;
     public Integer buildIsFirst;

@@ -3,14 +3,13 @@ package zs.plugin.android.model;
 import com.google.gson.Gson;
 
 import java.io.Serializable;
-import java.util.List;
 
 /**
  * @author zhangshuai@attrsense.com
  * @date 2022/11/29 18:51
  * @description
  */
-public class DingDingBean implements Serializable {
+public class DingDingNewsBean implements Serializable {
     public String msgtype;
     public TextBean text;
     public LinkBean link;

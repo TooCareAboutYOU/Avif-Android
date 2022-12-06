@@ -1,4 +1,4 @@
-package zs.plugin.android.model;
+package zs.plugin.android.model.response;
 
 import com.google.gson.Gson;
 import com.google.gson.annotations.SerializedName;
@@ -10,7 +10,7 @@ import java.io.Serializable;
  * @date 2022/11/28 18:43
  * @description
  */
-public class GetUploadTokenBean implements Serializable {
+public class PgyTokenBean implements Serializable {
     //key 上传文件存储标识唯一 key
     public String key;
     //上传文件的 URL
@@ -20,15 +20,7 @@ public class GetUploadTokenBean implements Serializable {
 
     @Override
     public String toString() {
-        final StringBuilder sb = new StringBuilder("{");
-        sb.append("\"key\":\"")
-                .append(key).append('\"');
-        sb.append(",\"endpoint\":\"")
-                .append(endpoint).append('\"');
-        sb.append(",\"params\":")
-                .append(params);
-        sb.append('}');
-        return sb.toString();
+        return new Gson().toJson(this);
     }
 
     public static class ParamsBean implements Serializable {

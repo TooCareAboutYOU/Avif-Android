@@ -1,5 +1,6 @@
 package zs.plugin.android.http;
 
+
 import com.google.gson.Gson;
 import com.google.gson.stream.JsonReader;
 
@@ -13,6 +14,7 @@ import java.io.IOException;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import javax.crypto.Mac;
@@ -28,9 +30,11 @@ import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 import zs.plugin.android.api.ApiService;
-import zs.plugin.android.model.BaseResponseBean;
-import zs.plugin.android.model.GetAppDetailInfoBean;
-import zs.plugin.android.model.GetUploadTokenBean;
+import zs.plugin.android.model.response.BaseResponseBean;
+import zs.plugin.android.model.response.FirImTokenBean;
+import zs.plugin.android.model.response.FirImUploadBean;
+import zs.plugin.android.model.response.PgyAppDetailInfoBean;
+import zs.plugin.android.model.response.PgyTokenBean;
 import zs.plugin.android.model.PluginConfigBean;
 
 /**
@@ -41,28 +45,34 @@ import zs.plugin.android.model.PluginConfigBean;
 public class HttpRequest {
 
     private static Project mProject;
-    private static Gson gson;
+    private static Gson mGson;
     public static PluginConfigBean mData;
     private static Long mTimestamp;
     private static boolean isUpload = false;
 
     private HttpLoggingInterceptor mInterceptor = new HttpLoggingInterceptor(s -> {
         printLog("日志：" + s);
-        if (s.contains("204")) {
-            printLog("上传成功！！");
+        if (s.contains("<-- 201")) {
+            printLog("Fir.im请求成功！！");
+            isUpload = true;
+        }
+
+        if (s.contains("<-- 204")) {
+            printLog("蒲公英上传成功！！");
             isUpload = true;
         }
     });
     private OkHttpClient mOkhttpClient;
     private Retrofit mRetrofit;
     private ApiService mApiService;
-    private GetUploadTokenBean mUploadToken;
+    private PgyTokenBean mUploadToken;
+    private FirImTokenBean mFirImTokenBean;
 
     private HttpRequest() {
         mInterceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
         mOkhttpClient = new OkHttpClient.Builder().addInterceptor(mInterceptor).build();
         mRetrofit = new Retrofit.Builder()
-                .baseUrl(mData.pgyConfig.pgyBaseUrl)
+                .baseUrl(mData.isPgy ? mData.pgyConfig.pgyBaseUrl : mData.firImConfig.firBaseUrl)
                 .client(mOkhttpClient)
                 .addConverterFactory(GsonConverterFactory.create())
                 .build();
@@ -79,21 +89,237 @@ public class HttpRequest {
 
     public static void init(Project project) {
         mProject = project;
-        gson = new Gson();
+        mGson = new Gson();
         File file = new File(project.getRootDir().getAbsolutePath() + "/releaseApk.json");
         try {
             JsonReader jsonReader = new JsonReader(new FileReader(file));
-            mData = gson.fromJson(jsonReader, PluginConfigBean.class);
-
+            mData = mGson.fromJson(jsonReader, PluginConfigBean.class);
             //拼接webhook
-            getSign();
+            createSign();
             printLog("输出：" + mData);
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         }
     }
 
-    private static String getSign() {
+
+    /**
+     * 获取蒲公英token
+     */
+    public void getToken() {
+        if (mData.isPgy) {
+            getPgyToken();
+        } else {
+            getFirImToken();
+        }
+    }
+
+    /**
+     * 上传apk文件到蒲公英
+     */
+    public void uploadApk() {
+        if (mData.isPgy) {
+            uploadApkToPgy();
+        } else {
+            uploadApkToFirIm();
+        }
+    }
+
+
+    /**
+     * ---------------------------------------------------------------------------------------------
+     *                                          蒲公英接口区
+     * ---------------------------------------------------------------------------------------------
+     * @description：
+     */
+
+    /**
+     * 获取蒲公英token
+     */
+    private void getPgyToken() {
+        try {
+            Map<String, Object> map = new HashMap<String, Object>(11) {
+                {
+                    put("_api_key", mData.pgyConfig.pgyApiKey);
+                    put("buildType", mData.pgyConfig.pgyBuildType);
+                    put("oversea", mData.pgyConfig.pgyOversea);
+                    put("buildInstallType", mData.pgyConfig.pgyBuildInstallType);
+                    put("buildPassword", mData.pgyConfig.pgyBuildPassword);
+                    put("buildDescription", mData.pgyConfig.pgyBuildDescription);
+                    put("buildUpdateDescription", mData.pgyConfig.pgyBuildUpdateDescription);
+                    put("buildInstallDate", mData.pgyConfig.pgyBuildInstallDate);
+                    put("buildInstallStartDate", mData.pgyConfig.pgyBuildInstallStartDate);
+                    put("buildInstallEndDate", mData.pgyConfig.pgyBuildInstallEndDate);
+                    put("buildChannelShortcut", mData.pgyConfig.pgyBuildChannelShortcut);
+                }
+            };
+            Call<BaseResponseBean<PgyTokenBean>> callBack = mApiService.getPgyToken(map);
+            Response<BaseResponseBean<PgyTokenBean>> result = callBack.execute();
+            printLog(">>>>>>>>>> HttpRequest.getUploadKey：" + result.body());
+            if (result.body() != null) {
+                mUploadToken = result.body().data;
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * 上传apk文件到蒲公英
+     */
+    private void uploadApkToPgy() {
+        printLog("运行了uploadApk：" + mUploadToken);
+        if (mUploadToken != null && mData.apkOutputPath != null && mData.apkOutputPath.length() > 0) {
+            try {
+                File file = new File(mData.apkOutputPath);
+                if (file.exists()) {
+                    RequestBody fileBody = RequestBody.create(file, MediaType.parse("multipart/form-data"));
+                    MultipartBody.Builder builder = new MultipartBody.Builder();
+                    builder.setType(MultipartBody.FORM);
+                    builder.addFormDataPart("key", mUploadToken.key);
+                    builder.addFormDataPart("signature", mUploadToken.params.signature);
+                    builder.addFormDataPart("x-cos-security-token", mUploadToken.params.xToken);
+                    builder.addFormDataPart("x-cos-meta-file-name", mData.apkName);
+                    builder.addFormDataPart("file", file.getName(), fileBody);
+                    List<MultipartBody.Part> parts = builder.build().parts();
+
+                    Call<BaseResponseBean<Object>> callBack = mApiService.uploadApkToPgy(mUploadToken.endpoint, parts);
+                    Response<BaseResponseBean<Object>> result = callBack.execute();
+                    printLog(">>>>>>>>>> HttpRequest.uploadApk：" + result.body());
+                    if (isUpload) {
+                        getAppDetailInfo();
+                    }
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    /**
+     * 发版后获取蒲公英版本信息
+     */
+    public void getAppDetailInfo() {
+        try {
+            Map<String, Object> map = new HashMap<String, Object>(3) {
+                {
+                    put("_api_key", mData.pgyConfig.pgyApiKey);
+                    put("appKey", mData.pgyConfig.pgyAppKey);
+                    put("buildKey", ""); //Build Key是唯一标识应用的索引ID，可以通过 获取App所有版本取得
+                }
+            };
+            Call<BaseResponseBean<PgyAppDetailInfoBean>> callBack = mApiService.getAppDetailInfo(map);
+            Response<BaseResponseBean<PgyAppDetailInfoBean>> result = callBack.execute();
+            if (result.body() != null && result.body().data != null) {
+                printLog(">>>>>>>>>> HttpRequest.getAppDetailInfo：" + result.body().data);
+                postToDD();
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * ---------------------------------------------------------------------------------------------
+     *                                          Fir.im 区
+     * ---------------------------------------------------------------------------------------------
+     *
+     * @description：
+     */
+
+    /**
+     * 获取Fir.im的token
+     */
+    private void getFirImToken() {
+        try {
+            Map<String, String> map = new HashMap<String, String>(3) {
+                {
+                    put("type", mData.firImConfig.type);
+                    put("bundle_id", mData.firImConfig.packageName);
+                    put("api_token", mData.firImConfig.apiToken);
+                }
+            };
+
+            Call<FirImTokenBean> call = mApiService.getFirImToken(map);
+            Response<FirImTokenBean> response = call.execute();
+            FirImTokenBean result = response.body();
+            if (result != null) {
+                mFirImTokenBean = result;
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * 上传apk和icon文件到Firm.im
+     */
+    private void uploadApkToFirIm() {
+        try {
+            if (!isUpload) {
+                return;
+            }
+            if (mData.apkOutputPath != null && mData.apkOutputPath.length() > 0) {
+                File apkFile = new File(mData.apkOutputPath);
+
+                if (apkFile.exists()) {
+                    RequestBody apkFileBody = RequestBody.create(apkFile, MediaType.parse("multipart/form-data"));
+                    MultipartBody.Builder builder = new MultipartBody.Builder();
+                    builder.setType(MultipartBody.FORM);
+                    builder.addFormDataPart("key", mFirImTokenBean.cert.binary.key);
+                    builder.addFormDataPart("token", mFirImTokenBean.cert.binary.token);
+                    builder.addFormDataPart("x:name", mData.firImConfig.xName);
+                    builder.addFormDataPart("x:version", mData.firImConfig.xVersion);
+                    builder.addFormDataPart("x:build", mData.firImConfig.xBuild);
+                    builder.addFormDataPart("x:changelog", mData.firImConfig.xChangeLog);
+                    builder.addFormDataPart("file", apkFile.getName(), apkFileBody);
+                    List<MultipartBody.Part> parts = builder.build().parts();
+                    Call<FirImUploadBean> call = mApiService.uploadToFirIm(mFirImTokenBean.cert.binary.upload_url, parts);
+
+                    Response<FirImUploadBean> response = call.execute();
+                    FirImUploadBean result = response.body();
+                    printLog(">>>>>>>>>> uploadApkToFirIm：" + result);
+
+                    if (result != null && result.is_completed) {
+
+                        postToDD();
+
+                        if (mData.firImConfig.icon != null && mData.firImConfig.icon.length() > 0) {
+                            File iconFile = new File(mData.firImConfig.icon);
+                            if (iconFile.exists()) {
+                                RequestBody iconFileBody = RequestBody.create(iconFile, MediaType.parse("image/*"));
+
+                                MultipartBody.Builder iconBuilder = new MultipartBody.Builder();
+                                iconBuilder.setType(MultipartBody.FORM);
+                                iconBuilder.addFormDataPart("key", mFirImTokenBean.cert.icon.key);
+                                iconBuilder.addFormDataPart("token", mFirImTokenBean.cert.icon.token);
+                                iconBuilder.addFormDataPart("file", iconFile.getName(), iconFileBody);
+                                List<MultipartBody.Part> iconParts = iconBuilder.build().parts();
+
+                                Call<FirImUploadBean> iconCall = mApiService.uploadToFirIm(mFirImTokenBean.cert.icon.upload_url, iconParts);
+                                Response<FirImUploadBean> iconResponse = iconCall.execute();
+                                printLog(">>>>>>>>>> uploadIconToFirIm：" + iconResponse.body());
+                            }
+                        }
+                    }
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * ---------------------------------------------------------------------------------------------
+     *                                          钉钉区
+     * ---------------------------------------------------------------------------------------------
+     * @description：
+     */
+
+    /**
+     * 安全配置
+     */
+    private static String createSign() {
         String sign = null;
         try {
             mTimestamp = System.currentTimeMillis();
@@ -110,108 +336,22 @@ public class HttpRequest {
     }
 
     /**
-     * 获取token
-     */
-    public void getUploadToken() {
-        Map<String, Object> map = new HashMap<String, Object>(11) {
-            {
-                put("_api_key", mData.pgyConfig.pgyApiKey);
-                put("buildType", mData.pgyConfig.pgyBuildType);
-                put("oversea", mData.pgyConfig.pgyOversea);
-                put("buildInstallType", mData.pgyConfig.pgyBuildInstallType);
-                put("buildPassword", mData.pgyConfig.pgyBuildPassword);
-                put("buildDescription", mData.pgyConfig.pgyBuildDescription);
-                put("buildUpdateDescription", mData.pgyConfig.pgyBuildUpdateDescription);
-                put("buildInstallDate", mData.pgyConfig.pgyBuildInstallDate);
-                put("buildInstallStartDate", mData.pgyConfig.pgyBuildInstallStartDate);
-                put("buildInstallEndDate", mData.pgyConfig.pgyBuildInstallEndDate);
-                put("buildChannelShortcut", mData.pgyConfig.pgyBuildChannelShortcut);
-            }
-        };
-        Call<BaseResponseBean<GetUploadTokenBean>> callBack = mApiService.getUploadToken(map);
-        try {
-            Response<BaseResponseBean<GetUploadTokenBean>> result = callBack.execute();
-            printLog(">>>>>>>>>> HttpRequest.getUploadKey：" + result.body());
-            if (result.body() != null) {
-                mUploadToken = result.body().data;
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
-    /**
-     * 上传apk文件
-     */
-    public void uploadApk() {
-        printLog("运行了uploadApk：" + mUploadToken);
-        if (mUploadToken != null) {
-            try {
-                File file = new File(mData.pgyConfig.apkOutputPath);
-                if (file.exists()) {
-                    printLog("文件路径：" + file.getAbsolutePath());
-                    RequestBody fileBody = RequestBody.create(file, MediaType.parse("multipart/form-data"));
-
-                    Call<BaseResponseBean<Object>> callBack = mApiService.uploadApk(
-                            mUploadToken.endpoint,
-                            RequestBody.create(mUploadToken.key, MediaType.parse("text/plain")),
-                            RequestBody.create(mUploadToken.params.signature, MediaType.parse("text/plain")),
-                            RequestBody.create(mUploadToken.params.xToken, MediaType.parse("text/plain")),
-                            RequestBody.create(mData.pgyConfig.apkName, MediaType.parse("text/plain")),
-                            MultipartBody.Part.createFormData("file", file.getName(), fileBody)
-                    );
-                    Response<BaseResponseBean<Object>> result = callBack.execute();
-                    printLog(">>>>>>>>>> HttpRequest.uploadApk：" + result.body());
-                    if (isUpload) {
-                        getAppDetailInfo();
-                    }
-                }
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }
-    }
-
-    public void getAppDetailInfo() {
-        Map<String, Object> map = new HashMap<String, Object>(3) {
-            {
-                put("_api_key", mData.pgyConfig.pgyApiKey);
-                put("appKey", mData.pgyConfig.pgyAppKey);
-                put("buildKey", ""); //Build Key是唯一标识应用的索引ID，可以通过 获取App所有版本取得
-            }
-        };
-        Call<BaseResponseBean<GetAppDetailInfoBean>> callBack = mApiService.getAppDetailInfo(map);
-        try {
-            Response<BaseResponseBean<GetAppDetailInfoBean>> result = callBack.execute();
-            printLog(">>>>>>>>>> HttpRequest.getAppDetailInfo：" + result.body().data);
-
-            if (result.body() != null && result.body().data != null) {
-                postToDD();
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
-    /**
-     * ---------------------------------------------------------------------------------------------
-     * 消息方式：文本、链接、图片、markdown、跳转
-     * ---------------------------------------------------------------------------------------------
-     */
-
-    /**
      * 发送文本到钉钉
+     * {"errcode":0,"errmsg":"ok"}
      */
     public void postToDD() {
         try {
-            Response<BaseResponseBean<Object>> result = mApiService.postToDD(mData.ddConfig.ddWebHookUrl, mData.ddContent).execute();
-            printLog(">>>>>>>>>> HttpRequest.postToDD：" + result.body());
+            Response<Object> response = mApiService.postToDD(mData.ddConfig.ddWebHookUrl, mData.ddContent).execute();
+            Object result = response.body();
+            printLog(">>>>>>>>>> HttpRequest.postToDD：" + result);
+
         } catch (IOException e) {
             e.printStackTrace();
         }
+        isUpload = false;
     }
 
     private static void printLog(String msg) {
-//        System.out.println(msg);
+        System.out.println(msg);
     }
 }

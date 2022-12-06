@@ -1,5 +1,6 @@
 package zs.plugin.android.api;
 
+import java.util.List;
 import java.util.Map;
 
 import okhttp3.MultipartBody;
@@ -11,11 +12,14 @@ import retrofit2.http.FormUrlEncoded;
 import retrofit2.http.Multipart;
 import retrofit2.http.POST;
 import retrofit2.http.Part;
+import retrofit2.http.PartMap;
 import retrofit2.http.Url;
-import zs.plugin.android.model.DingDingBean;
-import zs.plugin.android.model.BaseResponseBean;
-import zs.plugin.android.model.GetAppDetailInfoBean;
-import zs.plugin.android.model.GetUploadTokenBean;
+import zs.plugin.android.model.DingDingNewsBean;
+import zs.plugin.android.model.response.BaseResponseBean;
+import zs.plugin.android.model.response.FirImTokenBean;
+import zs.plugin.android.model.response.FirImUploadBean;
+import zs.plugin.android.model.response.PgyAppDetailInfoBean;
+import zs.plugin.android.model.response.PgyTokenBean;
 
 /**
  * @author zhangshuai@attrsense.com
@@ -25,6 +29,12 @@ import zs.plugin.android.model.GetUploadTokenBean;
 public interface ApiService {
 
     /**
+     * ---------------------------------------------------------------------------------------------
+     *                                          蒲公英
+     * ---------------------------------------------------------------------------------------------
+     * @description：
+     */
+    /**
      * 获取上传token
      *
      * @param map
@@ -32,28 +42,15 @@ public interface ApiService {
      */
     @FormUrlEncoded
     @POST("getCOSToken")
-    Call<BaseResponseBean<GetUploadTokenBean>> getUploadToken(@FieldMap Map<String, Object> map);
+    Call<BaseResponseBean<PgyTokenBean>> getPgyToken(@FieldMap Map<String, Object> map);
 
     /**
-     * 上传apk文件
-     *
-     * @param url
-     * @param key
-     * @param signature
-     * @param xToken
-     * @param xName
-     * @param file
-     * @return
+     * 上传apk文件到蒲公英
      */
     @Multipart
     @POST
-    Call<BaseResponseBean<Object>> uploadApk(@Url String url,
-                                             @Part("key") RequestBody key,
-                                             @Part("signature") RequestBody signature,
-                                             @Part("x-cos-security-token") RequestBody xToken,
-                                             @Part("x-cos-meta-file-name") RequestBody xName,
-                                             @Part MultipartBody.Part file);
-
+    Call<BaseResponseBean<Object>> uploadApkToPgy(@Url String url,
+                                                  @Part List<MultipartBody.Part> parts);
 
     /**
      * 获取应用信息
@@ -66,8 +63,14 @@ public interface ApiService {
      */
     @FormUrlEncoded
     @POST("view")
-    Call<BaseResponseBean<GetAppDetailInfoBean>> getAppDetailInfo(@FieldMap Map<String, Object> map);
+    Call<BaseResponseBean<PgyAppDetailInfoBean>> getAppDetailInfo(@FieldMap Map<String, Object> map);
 
+    /**
+     * ---------------------------------------------------------------------------------------------
+     *                                          钉钉
+     * ---------------------------------------------------------------------------------------------
+     * @description：
+     */
 
     /**
      * 发送自定义消息形式到钉钉
@@ -77,6 +80,27 @@ public interface ApiService {
      * @return
      */
     @POST
-    Call<BaseResponseBean<Object>> postToDD(@Url String url, @Body DingDingBean body);
+    Call<Object> postToDD(@Url String url, @Body DingDingNewsBean body);
 
+
+    /**
+     * ---------------------------------------------------------------------------------------------
+     *                                          Fir.im
+     * ---------------------------------------------------------------------------------------------
+     * @description：
+     */
+
+    /**
+     * 获取Fir.im的上传凭证
+     *
+     * @param map
+     * @return
+     */
+    @FormUrlEncoded
+    @POST(".")
+    Call<FirImTokenBean> getFirImToken(@FieldMap Map<String, String> map);
+
+    @Multipart
+    @POST
+    Call<FirImUploadBean> uploadToFirIm(@Url String url, @Part List<MultipartBody.Part> parts);
 }

@@ -33,7 +33,7 @@ public class MyAndroidPlugin implements Plugin<Project> {
                 pro.getTasks().matching(new Spec<Task>() {
                     @Override
                     public boolean isSatisfiedBy(Task task) {
-                        return task.getName().equals("assembleRelease");
+                        return "assembleRelease".equals(task.getName());
                     }
                 }).forEach(new Consumer<Task>() {
                     @Override
@@ -58,7 +58,7 @@ public class MyAndroidPlugin implements Plugin<Project> {
         taskGetToken.doLast(new Action<Task>() {
             @Override
             public void execute(Task task) {
-                HttpRequest.getInstance().getUploadToken();
+                HttpRequest.getInstance().getToken();
             }
         });
 
@@ -70,14 +70,13 @@ public class MyAndroidPlugin implements Plugin<Project> {
                 HttpRequest.getInstance().uploadApk();
             }
         });
-
-        Task taskPostTextToDD = project.task("APostDD");
-        taskPostTextToDD.setGroup(GROUP_ID_ANDROID);
-        taskPostTextToDD.doLast(new Action<Task>() {
-            @Override
-            public void execute(Task task) {
-                HttpRequest.getInstance().getAppDetailInfo();
-            }
-        });
+//        Task taskPostTextToDD = project.task("APostDD");
+//        taskPostTextToDD.setGroup(GROUP_ID_ANDROID);
+//        taskPostTextToDD.doLast(new Action<Task>() {
+//            @Override
+//            public void execute(Task task) {
+//                HttpRequest.getInstance().getAppDetailInfo();
+//            }
+//        });
     }
 }

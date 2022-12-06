@@ -9,18 +9,21 @@ import java.io.Serializable;
  * @date 2022/12/5 10:58
  */
 public class PluginConfigBean implements Serializable {
-    /**
-     * (必填)执行gradle目标Task的名称
-     */
-//    public String[] executeTaskName;
-//      "executeTaskName": [
-//              "assembleRelease",
-//              "assembleDebug"
-//              ],
-
+    //(必填)本地Apk文件的本地路径
+    public String apkOutputPath;
+    //(选填)apk文件的原始名
+    public String apkName;
+    //true：蒲公英，false：fir.im
+    public boolean isPgy;
+    //蒲公英配置
     public PgyConfigBean pgyConfig;
+    //Fir.im配置
+    public FirImConfigBean firImConfig;
+    //钉钉配置
     public DdConfigBean ddConfig;
-    public DingDingBean ddContent;
+    //发送钉钉消息内容
+    public DingDingNewsBean ddContent;
+
 
     public static class PgyConfigBean implements Serializable {
         //(必填)蒲公英服务地址
@@ -49,10 +52,6 @@ public class PluginConfigBean implements Serializable {
         public String pgyBuildInstallEndDate;
         //(选填)所需更新指定的渠道短链接，渠道短链接须为已创建成功的，并且只可指定一个渠道，字符串型，如：abcd
         public String pgyBuildChannelShortcut;
-        //(必填)本地Apk文件的本地路径
-        public String apkOutputPath;
-        //(选填)apk文件的原始名
-        public String apkName;
 
         @Override
         public String toString() {
@@ -63,6 +62,32 @@ public class PluginConfigBean implements Serializable {
     public static class DdConfigBean implements Serializable {
         public String ddWebSecret;
         public String ddWebHookUrl;
+
+        @Override
+        public String toString() {
+            return new Gson().toJson(this);
+        }
+    }
+
+    public static class FirImConfigBean implements Serializable {
+        //Fir.im服务地址
+        public String firBaseUrl;
+        //ios 或者 android（发布新应用时必填）
+        public String type;
+        //App 的 bundleId（发布新应用时必填）
+        public String packageName;
+        //长度为 32, 用户在 fir 的 api_token
+        public String apiToken;
+        //appLogo 为空的话就不上传icon
+        public String icon;
+        //应用名称（上传 ICON 时不需要）
+        public String xName;
+        //版本号（上传 ICON 时不需要）
+        public String xVersion;
+        //Build 号（上传 ICON 时不需要）
+        public String xBuild;
+        //更新日志（上传 ICON 时不需要）
+        public String xChangeLog;
 
         @Override
         public String toString() {

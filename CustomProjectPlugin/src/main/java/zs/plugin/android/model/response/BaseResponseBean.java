@@ -1,4 +1,4 @@
-package zs.plugin.android.model;
+package zs.plugin.android.model.response;
 
 import java.io.Serializable;
 

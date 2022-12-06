@@ -6,48 +6,6 @@ plugins {
     //id 'java-library'
 }
 
-////将build/lib中的CustomProjectPlugin.jar文件，复制一份到build/jar
-//def jarTask = tasks.register('AJarDistribution', Jar) {
-//    from layout.buildDirectory.dir('libs')
-//    //具体文件
-//    it.archiveFileName = 'CustomProjectPlugin.jar'
-//    it.destinationDirectory = layout.buildDirectory.dir('jar')
-//}
-//
-//
-////将build/toArchive中的HelloZip.zip文件，复制一份到build/zip
-//def zipTask = tasks.register('AZipDistribution', Zip) {
-//    from layout.buildDirectory.dir('toArchive')
-//    //具体文件
-//    it.archiveFileName = 'HelloZip.zip'
-//    it.destinationDirectory = layout.buildDirectory.dir('zip')
-//}
-//
-////先调用复制功能，然后删除就文件和文件目录
-//tasks.register('ADeleteDistribution', Delete) {
-//    it.dependsOn(zipTask)
-//    //删除目录
-//    delete layout.buildDirectory.dir('toArchive')
-//    //删除文件夹下的所有文件
-//    //fileTree(layout.buildDirectory.dir('toArchive'))
-//}
-//
-////移动文件
-//tasks.register('AMoveDirFile') {
-//    it.doLast {
-//        ant.move file: "${buildDir}/libs/CustomProjectPlugin.jar", todir: "${buildDir}/toArchive"
-//    }
-//}
-//
-////删除build文件夹
-//tasks.register('myClean', Delete) {
-//    delete buildDir
-//}
-
-///////////////////////////////////////////////////////////////////////////
-//  项目区域
-///////////////////////////////////////////////////////////////////////////
-
 dependencies {
     //gradle sdk
     implementation gradleApi()

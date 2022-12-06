@@ -48,7 +48,7 @@ android {
 }
 
 dependencies {
-    implementation files("libs/avifandroidjni-release.aar")
+//    implementation files("libs/avifandroidjni-release.aar")
 //    implementation files("libs/avifandroidjni-release_1.aar")
 }
 

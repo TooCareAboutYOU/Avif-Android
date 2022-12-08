@@ -108,9 +108,17 @@ public class HttpRequest {
      */
     public void getToken() {
         if (mData.isPgy) {
-            getPgyToken();
+            if (mData.pgyConfig != null) {
+                getPgyToken();
+            }else{
+                System.out.println("请配置蒲公英相关数据");
+            }
         } else {
-            getFirImToken();
+            if (mData.firImConfig != null) {
+                getFirImToken();
+            }else{
+                System.out.println("请配置Fir.im相关数据");
+            }
         }
     }
 
@@ -119,9 +127,17 @@ public class HttpRequest {
      */
     public void uploadApk() {
         if (mData.isPgy) {
-            uploadApkToPgy();
+            if (mData.pgyConfig != null) {
+                uploadApkToPgy();
+            }else{
+                System.out.println("请配置蒲公英相关数据");
+            }
         } else {
-            uploadApkToFirIm();
+            if (mData.firImConfig != null) {
+                uploadApkToFirIm();
+            }else{
+                System.out.println("请配置Fir.im相关数据");
+            }
         }
     }
 
@@ -212,7 +228,7 @@ public class HttpRequest {
             Response<BaseResponseBean<PgyAppDetailInfoBean>> result = callBack.execute();
             if (result.body() != null && result.body().data != null) {
                 printLog(">>>>>>>>>> HttpRequest.getAppDetailInfo：" + result.body().data);
-                postToDD();
+                postToDingDing();
             }
         } catch (IOException e) {
             e.printStackTrace();
@@ -282,7 +298,7 @@ public class HttpRequest {
 
                     if (result != null && result.is_completed) {
 
-                        postToDD();
+                        postToDingDing();
 
                         if (mData.firImConfig.icon != null && mData.firImConfig.icon.length() > 0) {
                             File iconFile = new File(mData.firImConfig.icon);
@@ -339,11 +355,11 @@ public class HttpRequest {
      * 发送文本到钉钉
      * {"errcode":0,"errmsg":"ok"}
      */
-    public void postToDD() {
+    private void postToDingDing() {
         try {
-            Response<Object> response = mApiService.postToDD(mData.ddConfig.ddWebHookUrl, mData.ddContent).execute();
+            Response<Object> response = mApiService.postToDingDing(mData.ddConfig.ddWebHookUrl, mData.ddContent).execute();
             Object result = response.body();
-            printLog(">>>>>>>>>> HttpRequest.postToDD：" + result);
+            printLog(">>>>>>>>>> HttpRequest.postToDingDing：" + result);
 
         } catch (IOException e) {
             e.printStackTrace();

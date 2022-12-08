@@ -80,7 +80,7 @@ public interface ApiService {
      * @return
      */
     @POST
-    Call<Object> postToDD(@Url String url, @Body DingDingNewsBean body);
+    Call<Object> postToDingDing(@Url String url, @Body DingDingNewsBean body);
 
 
     /**

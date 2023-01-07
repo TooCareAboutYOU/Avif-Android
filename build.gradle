@@ -14,8 +14,8 @@ buildscript {
 //        classpath 'com.squareup.okhttp3:logging-interceptor:4.9.3'
 
         //模拟远程仓库依赖
-        classpath 'zs.plugin.android:android-plugin:1.0.0'
-//        classpath 'zs.plugin.groovy:groovy-plugin:1.0.0'
+        classpath 'cn.andzhang.android:android-plugin:1.0.0'
+//        classpath 'cn.andzhang.groovy:groovy-plugin:1.0.0'
     }
 }
 

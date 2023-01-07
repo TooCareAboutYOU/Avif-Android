@@ -1,0 +1,104 @@
+{
+  "formatVersion": "1.1",
+  "component": {
+    "group": "Avif-Android",
+    "module": "CustomProjectPlugin",
+    "version": "unspecified",
+    "attributes": {
+      "org.gradle.status": "release"
+    }
+  },
+  "createdBy": {
+    "gradle": {
+      "version": "7.4"
+    }
+  },
+  "variants": [
+    {
+      "name": "apiElements",
+      "attributes": {
+        "org.gradle.category": "library",
+        "org.gradle.dependency.bundling": "external",
+        "org.gradle.jvm.version": 8,
+        "org.gradle.libraryelements": "jar",
+        "org.gradle.usage": "java-api"
+      },
+      "files": [
+        {
+          "name": "android-plugin-1.0.0.jar",
+          "url": "android-plugin-1.0.0.jar",
+          "size": 74512,
+          "sha512": "76e25902c94b60e1e7c65851dbbd32f1b2fad2e07608e4509fa3971f28d5d070b2694c9862309133a480a40324c0f0aac9612198e7cdc55014f84689a7673d01",
+          "sha256": "7aa3d62f77659b34531e97fc436cb074c19c26babb590d830df5eead0a53f810",
+          "sha1": "01800d51b5e886be57adec23cc907176f1e7c806",
+          "md5": "1f13006f19208ddf7cabe577ff595fae"
+        }
+      ]
+    },
+    {
+      "name": "runtimeElements",
+      "attributes": {
+        "org.gradle.category": "library",
+        "org.gradle.dependency.bundling": "external",
+        "org.gradle.jvm.version": 8,
+        "org.gradle.libraryelements": "jar",
+        "org.gradle.usage": "java-runtime"
+      },
+      "dependencies": [
+        {
+          "group": "commons-io",
+          "module": "commons-io",
+          "version": {
+            "requires": "2.6"
+          }
+        },
+        {
+          "group": "commons-codec",
+          "module": "commons-codec",
+          "version": {
+            "requires": "1.11"
+          }
+        },
+        {
+          "group": "com.squareup.okhttp3",
+          "module": "okhttp",
+          "version": {
+            "requires": "4.10.0"
+          }
+        },
+        {
+          "group": "com.squareup.retrofit2",
+          "module": "retrofit",
+          "version": {
+            "requires": "2.9.0"
+          }
+        },
+        {
+          "group": "com.squareup.retrofit2",
+          "module": "converter-gson",
+          "version": {
+            "requires": "2.9.0"
+          }
+        },
+        {
+          "group": "com.squareup.okhttp3",
+          "module": "logging-interceptor",
+          "version": {
+            "requires": "4.9.3"
+          }
+        }
+      ],
+      "files": [
+        {
+          "name": "android-plugin-1.0.0.jar",
+          "url": "android-plugin-1.0.0.jar",
+          "size": 74512,
+          "sha512": "76e25902c94b60e1e7c65851dbbd32f1b2fad2e07608e4509fa3971f28d5d070b2694c9862309133a480a40324c0f0aac9612198e7cdc55014f84689a7673d01",
+          "sha256": "7aa3d62f77659b34531e97fc436cb074c19c26babb590d830df5eead0a53f810",
+          "sha1": "01800d51b5e886be57adec23cc907176f1e7c806",
+          "md5": "1f13006f19208ddf7cabe577ff595fae"
+        }
+      ]
+    }
+  ]
+}

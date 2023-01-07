@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     android:background="#EBEBEB"
     android:orientation="vertical"
-    tools:context=".MainActivity">
+    tools:context="cn.android.avif.MainActivity">
 
     <androidx.appcompat.widget.AppCompatTextView
         android:id="@+id/acTv_info"

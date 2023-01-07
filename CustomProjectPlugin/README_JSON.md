@@ -1,7 +1,8 @@
 ## 插件配置
 
-1、选填配置：pgyConfig、firImConfig</br>
-2、必填配置：ddConfig、ddContent中根据自定义的msgtype选择对应的配置模型</br>
+
+1、必填配置：ddConfig、ddContent中根据自定义的msgtype选择对应的配置模型</br>
+2、选填配置：pgyConfig、firImConfig</br>
 
 ```
 {
